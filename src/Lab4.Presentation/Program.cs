@@ -4,6 +4,8 @@ public static class Program
 {
     public static void Main(string[] args)
     {
+        var outputWriter = new ConsoleOutputWriter();
+
         Console.WriteLine($"The program has started!");
         Console.WriteLine($"Type 'exit' to quit");
 
@@ -17,6 +19,8 @@ public static class Program
 
             if (input == "exit")
                 break;
+
+            string[] commandTokens = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
             // TODO: finish the lab work
         }
