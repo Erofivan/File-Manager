@@ -6,19 +6,19 @@ public interface IFileSystem
 {
     bool IsConnected { get; }
 
-    IEnumerable<IFileSystemComponent> ListDirectory(string path, int depth);
+    IEnumerable<IFileSystemComponent> ListDirectory(string directoryPath, int depth);
 
-    FileReadResult ReadFile(string path);
+    FileReadResult ReadFile(string filePath);
 
-    FileOperationResult MoveFile(string path);
+    FileModificationResult MoveFile(string currentFilePath, string newFilePath);
 
-    FileOperationResult CopyFile(string oldPath, string newPath);
+    FileModificationResult CopyFile(string currentFilePath, string newFilePath);
 
-    FileOperationResult DeleteFile(string path);
+    FileModificationResult DeleteFile(string filePath);
 
-    FileOperationResult RenameFile(string path, string newName);
+    FileModificationResult RenameFile(string filePath, string newFileName);
 
-    bool FileExists(string path);
+    bool FileExists(string filePath);
 
-    bool DirectoryExists(string path);
+    bool DirectoryExists(string directoryPath);
 }

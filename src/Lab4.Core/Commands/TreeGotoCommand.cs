@@ -9,22 +9,23 @@ public sealed class TreeGotoCommand : ICommand
         _path = path;
     }
 
-    public CommandResult Execute(ExecutionContext context)
+    public CommandExecutionResult Execute(Context context)
     {
         if (context.FileSystem.IsConnected is false)
-            return new CommandResult.FileSystemNotConnected();
+            return new CommandExecutionResult.FileSystemNotConnected();
 
         string resolvedPath = context.ResolvePath(_path);
 
         if (context.FileSystem.DirectoryExists(resolvedPath) is false)
-            return new CommandResult.DirectoryNotFound(_path);
+            return new CommandExecutionResult.DirectoryNotFound(_path);
 
         string localPath = resolvedPath.Substring(context.ConnectionPath.Length);
+
         if (string.IsNullOrEmpty(localPath))
             localPath = "/";
 
         context.SetCurrentPath(localPath);
 
-        return new CommandResult.Success();
+        return new CommandExecutionResult.Success();
     }
 }

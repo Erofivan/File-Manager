@@ -24,6 +24,7 @@ public sealed class FileSystemTreeVisitor : IFileSystemComponentsVisitor
 
         _buffer.Append(_treeDisplaySettings.FileSymbol);
         _buffer.Append(component.Name);
+        _buffer.AppendLine();
     }
 
     public void Visit(DirectoryFileSystemComponent component)
@@ -32,6 +33,7 @@ public sealed class FileSystemTreeVisitor : IFileSystemComponentsVisitor
 
         _buffer.Append(_treeDisplaySettings.DirectorySymbol);
         _buffer.Append(component.Name);
+        _buffer.AppendLine();
 
         ++_currentIndentDepth;
         foreach (IFileSystemComponent child in component.Children)

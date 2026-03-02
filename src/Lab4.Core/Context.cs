@@ -4,9 +4,9 @@ using Itmo.ObjectOrientedProgramming.Lab4.Core.OutputWriters;
 
 namespace Itmo.ObjectOrientedProgramming.Lab4.Core;
 
-public sealed class ExecutionContext
+public sealed class Context
 {
-    public ExecutionContext(IOutputWriter outputWriter, FileSystemTreeDisplaySettings treeDisplaySettings)
+    public Context(IOutputWriter outputWriter, FileSystemTreeDisplaySettings treeDisplaySettings)
     {
         OutputWriter = outputWriter;
         TreeDisplaySettings = treeDisplaySettings;

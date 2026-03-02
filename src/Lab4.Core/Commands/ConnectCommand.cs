@@ -13,18 +13,18 @@ public sealed class ConnectCommand : ICommand
         _fileSystemFactory = fileSystemFactory;
     }
 
-    public CommandResult Execute(ExecutionContext context)
+    public CommandExecutionResult Execute(Context context)
     {
         if (!_address.StartsWith('/'))
-            return new CommandResult.Failure("Address must be an absolute path");
+            return new CommandExecutionResult.Failure("Address must be an absolute path");
 
         IFileSystem fileSystem = _fileSystemFactory.Create();
 
         if (fileSystem.DirectoryExists(_address) is false)
-            return new CommandResult.DirectoryNotFound(_address);
+            return new CommandExecutionResult.DirectoryNotFound(_address);
 
         context.Connect(fileSystem, _address.TrimEnd('/'));
 
-        return new CommandResult.Success();
+        return new CommandExecutionResult.Success();
     }
 }

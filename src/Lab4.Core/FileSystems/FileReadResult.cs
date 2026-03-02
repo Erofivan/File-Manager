@@ -6,5 +6,5 @@ public abstract record FileReadResult
 
     public sealed record Success(string Content) : FileReadResult;
 
-    public sealed record Failure(string Messagße) : FileReadResult;
+    public sealed record Failure(string Message) : FileReadResult;
 }

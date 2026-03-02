@@ -12,15 +12,15 @@ public sealed class TreeListCommand : ICommand
         _depth = depth;
     }
 
-    public CommandResult Execute(ExecutionContext context)
+    public CommandExecutionResult Execute(Context context)
     {
         if (context.FileSystem.IsConnected is false)
-            return new CommandResult.FileSystemNotConnected();
+            return new CommandExecutionResult.FileSystemNotConnected();
 
         string currentFullPath = context.ConnectionPath.TrimEnd('/') + context.CurrentPath;
 
         if (context.FileSystem.DirectoryExists(currentFullPath) is false)
-            return new CommandResult.DirectoryNotFound(context.CurrentPath);
+            return new CommandExecutionResult.DirectoryNotFound(context.CurrentPath);
 
         var visitor = new FileSystemTreeVisitor(context.OutputWriter, context.TreeDisplaySettings);
 
@@ -29,6 +29,6 @@ public sealed class TreeListCommand : ICommand
 
         visitor.Flush();
 
-        return new CommandResult.Success();
+        return new CommandExecutionResult.Success();
     }
 }

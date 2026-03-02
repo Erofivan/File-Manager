@@ -6,42 +6,42 @@ public sealed class NullFileSystem : IFileSystem
 {
     public bool IsConnected => false;
 
-    public IEnumerable<IFileSystemComponent> ListDirectory(string path, int depth)
+    public IEnumerable<IFileSystemComponent> ListDirectory(string directoryPath, int depth)
     {
         return [];
     }
 
-    public FileReadResult ReadFile(string path)
+    public FileReadResult ReadFile(string filePath)
     {
         return new FileReadResult.Failure("File system is not connected");
     }
 
-    public FileOperationResult MoveFile(string path)
+    public FileModificationResult MoveFile(string currentFilePath, string newFilePath)
     {
-        return new FileOperationResult.Failure("File system is not connected");
+        return new FileModificationResult.Failure("File system is not connected");
     }
 
-    public FileOperationResult CopyFile(string oldPath, string newPath)
+    public FileModificationResult CopyFile(string currentFilePath, string newFilePath)
     {
-        return new FileOperationResult.Failure("File system is not connected");
+        return new FileModificationResult.Failure("File system is not connected");
     }
 
-    public FileOperationResult DeleteFile(string path)
+    public FileModificationResult DeleteFile(string filePath)
     {
-        return new FileOperationResult.Failure("File system is not connected");
+        return new FileModificationResult.Failure("File system is not connected");
     }
 
-    public FileOperationResult RenameFile(string path, string newName)
+    public FileModificationResult RenameFile(string filePath, string newFileName)
     {
-        return new FileOperationResult.Failure("File system is not connected");
+        return new FileModificationResult.Failure("File system is not connected");
     }
 
-    public bool FileExists(string path)
+    public bool FileExists(string filePath)
     {
         return false;
     }
 
-    public bool DirectoryExists(string path)
+    public bool DirectoryExists(string directoryPath)
     {
         return false;
     }
