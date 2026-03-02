@@ -99,7 +99,7 @@ public static class Program
 
                     break;
 
-                case ConsoleKey.H:
+                case ConsoleKey.LeftArrow:
                     if (cursorPosition > 0)
                     {
                         cursorPosition--;
@@ -108,7 +108,7 @@ public static class Program
 
                     break;
 
-                case ConsoleKey.L:
+                case ConsoleKey.RightArrow:
                     if (cursorPosition < buffer.Length)
                     {
                         cursorPosition++;
@@ -117,14 +117,14 @@ public static class Program
 
                     break;
 
-                case ConsoleKey.J:
+                case ConsoleKey.UpArrow:
                     if (history.Count == 0) break;
 
                     historyIndex = Math.Max(0, historyIndex - 1);
                     cursorPosition = ReplaceCurrentLine(history[historyIndex], buffer);
                     break;
 
-                case ConsoleKey.K:
+                case ConsoleKey.DownArrow:
                     if (history.Count == 0) break;
 
                     historyIndex = Math.Min(history.Count, historyIndex + 1);
