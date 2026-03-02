@@ -11,7 +11,7 @@ public sealed class FileRenameCommandLink : CommandLinkBase
 
         FileRenameCommandBuilder builder = new FileRenameCommandBuilder()
             .WithFilePath(args[2])
-            .WithFilePath(args[3]);
+            .WithNewFileName(args[3]);
 
         return builder.Build();
     }

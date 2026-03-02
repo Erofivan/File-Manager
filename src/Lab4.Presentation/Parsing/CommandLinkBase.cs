@@ -29,7 +29,7 @@ public abstract class CommandLinkBase : ICommandLink
 
     protected static string? FindFlag(string[] args, string flagName)
     {
-        for (int i = 0; i < args.Length; ++i)
+        for (int i = 0; i < args.Length - 1; ++i)
         {
             if (args[i].Equals(flagName, StringComparison.Ordinal))
                 return args[i + 1];

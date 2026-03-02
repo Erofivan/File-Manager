@@ -19,7 +19,7 @@ public sealed class FileRenameCommand : ICommand
             return new CommandExecutionResult.FileSystemNotConnected();
 
         if (_newName.Contains('/', StringComparison.Ordinal))
-            return new CommandExecutionResult.Failure("New name must contain path separators");
+            return new CommandExecutionResult.Failure("New name must not contain path separators");
 
         string resolvedPath = context.ResolvePath(_path);
 

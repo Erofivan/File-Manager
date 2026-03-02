@@ -14,8 +14,8 @@ public static class Program
         var outputWriter = new ConsoleOutputWriter();
         var fileSystemTreeDisplaySettings = new FileSystemTreeDisplaySettings(
             "🇷🇺: ",
-            "🪆: ",
-            " ↳");
+            " 🪆 : ",
+            "\t");
 
         var executionContext = new Context(outputWriter, fileSystemTreeDisplaySettings);
         ICommandHandler commandHandlerChain = new CommandHandlerFactory().Create();
@@ -77,6 +77,7 @@ public static class Program
     {
         var buffer = new StringBuilder();
         int historyIndex = history.Count;
+        int cursorPosition = 0;
 
         while (true)
         {
@@ -89,25 +90,42 @@ public static class Program
                     return buffer.ToString();
 
                 case ConsoleKey.Backspace:
-                    if (buffer.Length > 0)
+                    if (cursorPosition > 0)
                     {
-                        buffer.Remove(buffer.Length - 1, 1);
-                        Console.Write("\b \b");
+                        buffer.Remove(cursorPosition - 1, 1);
+                        cursorPosition--;
+                        RedrawLine(buffer, cursorPosition);
                     }
 
                     break;
 
-                case ConsoleKey.UpArrow:
-                    if (history.Count is 0)
-                        break;
+                case ConsoleKey.H:
+                    if (cursorPosition > 0)
+                    {
+                        cursorPosition--;
+                        Console.SetCursorPosition(Console.CursorLeft - 1, Console.CursorTop);
+                    }
 
-                    historyIndex = Math.Max(0, historyIndex - 1);
-                    ReplaceCurrentLine(history[historyIndex], buffer);
                     break;
 
-                case ConsoleKey.DownArrow:
-                    if (history.Count is 0)
-                        break;
+                case ConsoleKey.L:
+                    if (cursorPosition < buffer.Length)
+                    {
+                        cursorPosition++;
+                        Console.SetCursorPosition(Console.CursorLeft + 1, Console.CursorTop);
+                    }
+
+                    break;
+
+                case ConsoleKey.J:
+                    if (history.Count == 0) break;
+
+                    historyIndex = Math.Max(0, historyIndex - 1);
+                    cursorPosition = ReplaceCurrentLine(history[historyIndex], buffer);
+                    break;
+
+                case ConsoleKey.K:
+                    if (history.Count == 0) break;
 
                     historyIndex = Math.Min(history.Count, historyIndex + 1);
 
@@ -115,14 +133,15 @@ public static class Program
                         ? history[historyIndex]
                         : string.Empty;
 
-                    ReplaceCurrentLine(text, buffer);
+                    cursorPosition = ReplaceCurrentLine(text, buffer);
                     break;
 
                 default:
-                    if (char.IsControl(key.KeyChar) is false)
+                    if (!char.IsControl(key.KeyChar))
                     {
-                        buffer.Append(key.KeyChar);
-                        Console.Write(key.KeyChar);
+                        buffer.Insert(cursorPosition, key.KeyChar);
+                        cursorPosition++;
+                        RedrawLine(buffer, cursorPosition);
                     }
 
                     break;
@@ -130,13 +149,21 @@ public static class Program
         }
     }
 
-    private static void ReplaceCurrentLine(string text, StringBuilder buffer)
+    private static int ReplaceCurrentLine(string text, StringBuilder buffer)
     {
-        Console.Write("\r> " + new string(' ', buffer.Length));
-        Console.Write("\r> ");
-
         buffer.Clear();
         buffer.Append(text);
-        Console.Write(text);
+        RedrawLine(buffer, buffer.Length);
+        return buffer.Length;
+    }
+
+    private static void RedrawLine(StringBuilder buffer, int cursorPosition)
+    {
+        Console.Write("\r> ");
+        Console.Write(new string(' ', Console.BufferWidth - 2));
+        Console.Write("\r> ");
+        Console.Write(buffer.ToString());
+
+        Console.SetCursorPosition(2 + cursorPosition, Console.CursorTop);
     }
 }

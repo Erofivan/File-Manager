@@ -24,7 +24,7 @@ public sealed class FileMoveCommand : ICommand
         if (context.FileSystem.FileExists(resolvedSourcePath) is false)
             return new CommandExecutionResult.FileNotFound(_sourcePath);
 
-        if (context.FileSystem.DirectoryExists(resolvedSourcePath) is false)
+        if (context.FileSystem.DirectoryExists(resolvedDestinationPath) is false)
             return new CommandExecutionResult.DirectoryNotFound(_destinationPath);
 
         FileModificationResult moveOperationResult =

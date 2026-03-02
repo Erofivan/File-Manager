@@ -66,7 +66,7 @@ public sealed class Context
 
         foreach (string token in pathTokens)
         {
-            if (token is ".")
+            if (token is "." or "")
                 continue;
 
             if (token is ".." && pathTokensStack.Count > 0)
