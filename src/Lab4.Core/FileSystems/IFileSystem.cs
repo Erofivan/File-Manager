@@ -1,4 +1,5 @@
 using Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystems.Components;
+using Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystems.FileSystemOperationsResults;
 
 namespace Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystems;
 
@@ -6,17 +7,25 @@ public interface IFileSystem
 {
     bool IsConnected { get; }
 
+    bool IsAbsolutePath(string path);
+
+    string NormalizePath(string path);
+
+    string CombinePaths(string basePath, string relativePath);
+
+    bool IsPathWithinBasePath(string path, string basePath);
+
     IEnumerable<IFileSystemComponent> ListDirectory(string directoryPath, int depth);
 
-    FileReadResult ReadFile(string filePath);
+    FileReadOperationResult ReadFile(string filePath);
 
-    FileModificationResult MoveFile(string currentFilePath, string newFilePath);
+    FileMoveOperationResult MoveFile(string currentFilePath, string newFilePath);
 
-    FileModificationResult CopyFile(string currentFilePath, string newFilePath);
+    FileCopyOperationResult CopyFile(string currentFilePath, string newFilePath);
 
-    FileModificationResult DeleteFile(string filePath);
+    FileDeleteOperationResult DeleteFile(string filePath);
 
-    FileModificationResult RenameFile(string filePath, string newFileName);
+    FileRenameOperationResult RenameFile(string filePath, string newFileName);
 
     bool FileExists(string filePath);
 

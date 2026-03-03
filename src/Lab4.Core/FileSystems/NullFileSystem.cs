@@ -1,4 +1,5 @@
 using Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystems.Components;
+using Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystems.FileSystemOperationsResults;
 
 namespace Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystems;
 
@@ -6,34 +7,54 @@ public sealed class NullFileSystem : IFileSystem
 {
     public bool IsConnected => false;
 
+    public bool IsAbsolutePath(string path)
+    {
+        return false;
+    }
+
+    public string NormalizePath(string path)
+    {
+        return path;
+    }
+
+    public string CombinePaths(string basePath, string relativePath)
+    {
+        return basePath;
+    }
+
+    public bool IsPathWithinBasePath(string path, string basePath)
+    {
+        return false;
+    }
+
     public IEnumerable<IFileSystemComponent> ListDirectory(string directoryPath, int depth)
     {
         return [];
     }
 
-    public FileReadResult ReadFile(string filePath)
+    public FileReadOperationResult ReadFile(string filePath)
     {
-        return new FileReadResult.Failure("File system is not connected");
+        return new FileReadOperationResult.Failure("File system is not connected");
     }
 
-    public FileModificationResult MoveFile(string currentFilePath, string newFilePath)
+    public FileMoveOperationResult MoveFile(string currentFilePath, string newFilePath)
     {
-        return new FileModificationResult.Failure("File system is not connected");
+        return new FileMoveOperationResult.Failure("File system is not connected");
     }
 
-    public FileModificationResult CopyFile(string currentFilePath, string newFilePath)
+    public FileCopyOperationResult CopyFile(string currentFilePath, string newFilePath)
     {
-        return new FileModificationResult.Failure("File system is not connected");
+        return new FileCopyOperationResult.Failure("File system is not connected");
     }
 
-    public FileModificationResult DeleteFile(string filePath)
+    public FileDeleteOperationResult DeleteFile(string filePath)
     {
-        return new FileModificationResult.Failure("File system is not connected");
+        return new FileDeleteOperationResult.Failure("File system is not connected");
     }
 
-    public FileModificationResult RenameFile(string filePath, string newFileName)
+    public FileRenameOperationResult RenameFile(string filePath, string newFileName)
     {
-        return new FileModificationResult.Failure("File system is not connected");
+        return new FileRenameOperationResult.Failure("File system is not connected");
     }
 
     public bool FileExists(string filePath)

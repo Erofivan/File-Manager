@@ -17,8 +17,10 @@ public static class Program
             " 🪆 : ",
             "\t");
 
-        var executionContext = new Context(outputWriter, fileSystemTreeDisplaySettings);
-        ICommandHandler commandHandlerChain = new CommandHandlerFactory().Create();
+        var executionContext = new Context();
+
+        var settings = new CommandHandlerSettings(outputWriter, fileSystemTreeDisplaySettings);
+        ICommandHandler commandHandlerChain = new CommandHandlerFactory(settings).Create();
 
         var commandHistory = new List<string>();
 
@@ -39,38 +41,45 @@ public static class Program
             commandHistory.Add(input);
 
             string[] commandTokens = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            ICommand? command = commandHandlerChain.Handle(commandTokens);
+            CommandParseResult parseResult = commandHandlerChain.Handle(commandTokens);
 
-            if (command is null)
+            if (parseResult is CommandParseResult.Failure parseFailure)
             {
-                Console.WriteLine("Unknown command");
+                Console.WriteLine($"Parse error: {parseFailure.Message}");
                 continue;
             }
 
-            CommandExecutionResult executionResult = command.Execute(executionContext);
+            if (parseResult is not CommandParseResult.Success success)
+                throw new UnreachableException();
 
-            switch (executionResult)
-            {
-                case CommandExecutionResult.Success:
-                    break;
-                case CommandExecutionResult.FileSystemNotConnected:
-                    Console.WriteLine("Error: file system is not connected");
-                    break;
-                case CommandExecutionResult.FileNotFound fileNotFound:
-                    Console.WriteLine($"Error: file not found: {fileNotFound.Path}");
-                    break;
-                case CommandExecutionResult.DirectoryNotFound directoryNotFound:
-                    Console.WriteLine($"Error: directory not found: {directoryNotFound.Path}");
-                    break;
-                case CommandExecutionResult.Failure failure:
-                    Console.WriteLine($"Error: {failure.Message}");
-                    break;
-                default:
-                    throw new UnreachableException();
-            }
+            CommandExecutionResult executionResult = success.Command.Execute(executionContext);
+            PrintExecutionResult(executionResult);
         }
 
         Console.WriteLine($"The program has finished!");
+    }
+
+    private static void PrintExecutionResult(CommandExecutionResult result)
+    {
+        switch (result)
+        {
+            case CommandExecutionResult.Success:
+                break;
+            case CommandExecutionResult.FileSystemNotConnected:
+                Console.WriteLine("Error: file system is not connected");
+                break;
+            case CommandExecutionResult.FileNotFound fileNotFound:
+                Console.WriteLine($"Error: file not found: {fileNotFound.Path}");
+                break;
+            case CommandExecutionResult.DirectoryNotFound directoryNotFound:
+                Console.WriteLine($"Error: directory not found: {directoryNotFound.Path}");
+                break;
+            case CommandExecutionResult.Failure failure:
+                Console.WriteLine($"Error: {failure.Message}");
+                break;
+            default:
+                throw new UnreachableException();
+        }
     }
 
     private static string PersistentReadLine(List<string> history)

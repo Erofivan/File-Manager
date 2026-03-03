@@ -1,5 +1,6 @@
 using Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystems;
 using Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystems.Components;
+using Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystems.FileSystemOperationsResults;
 using Xunit;
 
 namespace Itmo.ObjectOrientedProgramming.Lab4.Tests;
@@ -42,10 +43,10 @@ public sealed class NullFileSystemTests
         var nullFs = new NullFileSystem();
 
         // Act
-        FileReadResult result = nullFs.ReadFile("/any/file.txt");
+        FileReadOperationResult result = nullFs.ReadFile("/any/file.txt");
 
         // Assert
-        Assert.IsType<FileReadResult.Failure>(result);
+        Assert.IsType<FileReadOperationResult.Failure>(result);
     }
 
     // NullFileSystem MoveFile returns failure
@@ -56,10 +57,52 @@ public sealed class NullFileSystemTests
         var nullFs = new NullFileSystem();
 
         // Act
-        FileModificationResult result = nullFs.MoveFile("/a.txt", "/b");
+        FileMoveOperationResult result = nullFs.MoveFile("/a.txt", "/b");
 
         // Assert
-        Assert.IsType<FileModificationResult.Failure>(result);
+        Assert.IsType<FileMoveOperationResult.Failure>(result);
+    }
+
+    // NullFileSystem RenameFile returns failure
+    [Fact]
+    public void RenameFile_ReturnsFailure()
+    {
+        // Arrange
+        var nullFs = new NullFileSystem();
+
+        // Act
+        FileRenameOperationResult result = nullFs.RenameFile("/a.txt", "/b");
+
+        // Assert
+        Assert.IsType<FileRenameOperationResult.Failure>(result);
+    }
+
+    // NullFileSystem DeleteFile returns failure
+    [Fact]
+    public void DeleteFile_ReturnsFailure()
+    {
+        // Arrange
+        var nullFs = new NullFileSystem();
+
+        // Act
+        FileDeleteOperationResult result = nullFs.DeleteFile("a.txt");
+
+        // Assert
+        Assert.IsType<FileDeleteOperationResult.Failure>(result);
+    }
+
+    // NullFileSystem CopyFile returns failure
+    [Fact]
+    public void CopyFile_ReturnsFailure()
+    {
+        // Arrange
+        var nullFs = new NullFileSystem();
+
+        // Act
+        FileCopyOperationResult result = nullFs.CopyFile("/", "/user");
+
+        // Assert
+        Assert.IsType<FileCopyOperationResult.Failure>(result);
     }
 
     // NullFileSystem FileExists returns false

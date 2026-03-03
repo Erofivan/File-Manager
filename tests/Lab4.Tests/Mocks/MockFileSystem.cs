@@ -1,5 +1,6 @@
 using Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystems;
 using Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystems.Components;
+using Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystems.FileSystemOperationsResults;
 
 namespace Itmo.ObjectOrientedProgramming.Lab4.Tests.Mocks;
 
@@ -25,6 +26,52 @@ public sealed class MockFileSystem : IFileSystem
     public string? LastRenamePath { get; private set; }
 
     public string? LastRenameNewName { get; private set; }
+
+    public bool IsAbsolutePath(string path)
+    {
+        return path.StartsWith('/');
+    }
+
+    public string NormalizePath(string path)
+    {
+        string[] segments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        var stack = new List<string>();
+
+        foreach (string segment in segments)
+        {
+            if (segment is ".")
+            {
+                continue;
+            }
+
+            if (segment is ".." && stack.Count > 0)
+            {
+                stack.RemoveAt(stack.Count - 1);
+            }
+            else if (segment is not "..")
+            {
+                stack.Add(segment);
+            }
+        }
+
+        return "/" + string.Join("/", stack);
+    }
+
+    public string CombinePaths(string basePath, string relativePath)
+    {
+        if (string.IsNullOrEmpty(relativePath))
+            return basePath;
+
+        if (IsAbsolutePath(relativePath))
+            return basePath + relativePath;
+
+        return basePath + "/" + relativePath;
+    }
+
+    public bool IsPathWithinBasePath(string path, string basePath)
+    {
+        return path.StartsWith(basePath, StringComparison.Ordinal);
+    }
 
     public MockFileSystem AddFile(string path, string content = "")
     {
@@ -58,39 +105,42 @@ public sealed class MockFileSystem : IFileSystem
         }
     }
 
-    public FileReadResult ReadFile(string filePath)
+    public FileReadOperationResult ReadFile(string filePath)
     {
         if (_fileContents.TryGetValue(filePath, out string? content))
-            return new FileReadResult.Success(content);
+            return new FileReadOperationResult.Success(content);
 
-        return new FileReadResult.Failure("File not found");
+        return new FileReadOperationResult.Failure("File not found");
     }
 
-    public FileModificationResult MoveFile(string currentFilePath, string newFilePath)
+    public FileMoveOperationResult MoveFile(string currentFilePath, string newFilePath)
     {
         LastMoveSource = currentFilePath;
         LastMoveDest = newFilePath;
-        return new FileModificationResult.Success();
+        return new FileMoveOperationResult.Success();
     }
 
-    public FileModificationResult CopyFile(string currentFilePath, string newFilePath)
+    public FileCopyOperationResult CopyFile(string currentFilePath, string newFilePath)
     {
         LastCopySource = currentFilePath;
         LastCopyDest = newFilePath;
-        return new FileModificationResult.Success();
+        return new FileCopyOperationResult.Success();
     }
 
-    public FileModificationResult DeleteFile(string filePath)
+    public FileDeleteOperationResult DeleteFile(string filePath)
     {
         LastDeletePath = filePath;
-        return new FileModificationResult.Success();
+        return new FileDeleteOperationResult.Success();
     }
 
-    public FileModificationResult RenameFile(string filePath, string newFileName)
+    public FileRenameOperationResult RenameFile(string filePath, string newFileName)
     {
+        if (newFileName.Contains('/', StringComparison.Ordinal))
+            return new FileRenameOperationResult.Failure("New name must not contain path separators");
+
         LastRenamePath = filePath;
         LastRenameNewName = newFileName;
-        return new FileModificationResult.Success();
+        return new FileRenameOperationResult.Success();
     }
 
     public bool FileExists(string filePath)

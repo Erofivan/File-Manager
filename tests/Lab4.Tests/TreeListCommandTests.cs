@@ -1,5 +1,6 @@
 using Itmo.ObjectOrientedProgramming.Lab4.Core;
 using Itmo.ObjectOrientedProgramming.Lab4.Core.Commands;
+using Itmo.ObjectOrientedProgramming.Lab4.Core.Commands.Tree.List;
 using Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystems.Components;
 using Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystems.Trees;
 using Itmo.ObjectOrientedProgramming.Lab4.Tests.Mocks;
@@ -22,9 +23,9 @@ public sealed class TreeListCommandTests
         MockFileSystem mockFs = new MockFileSystem()
             .AddDirectoryWithComponents("/home/user", components);
         var writer = new MockOutputWriter();
-        var context = new Context(writer, new FileSystemTreeDisplaySettings("F ", "D ", "  "));
+        var context = new Context();
         context.Connect(mockFs, "/home/user");
-        var command = new TreeListCommand(1);
+        var command = new TreeListCommand(1, writer, new FileSystemTreeDisplaySettings("F ", "D ", "  "));
 
         // Act
         CommandExecutionResult result = command.Execute(context);
@@ -51,9 +52,9 @@ public sealed class TreeListCommandTests
         MockFileSystem mockFs = new MockFileSystem()
             .AddDirectoryWithComponents("/root", components);
         var writer = new MockOutputWriter();
-        var context = new Context(writer, new FileSystemTreeDisplaySettings("F ", "D ", "  "));
+        var context = new Context();
         context.Connect(mockFs, "/root");
-        var command = new TreeListCommand(1);
+        var command = new TreeListCommand(1, writer, new FileSystemTreeDisplaySettings("F ", "D ", "  "));
 
         // Act
         command.Execute(context);
@@ -69,8 +70,8 @@ public sealed class TreeListCommandTests
     {
         // Arrange
         var writer = new MockOutputWriter();
-        var context = new Context(writer, new FileSystemTreeDisplaySettings("F ", "D ", "  "));
-        var command = new TreeListCommand(1);
+        var context = new Context();
+        var command = new TreeListCommand(1, writer, new FileSystemTreeDisplaySettings("F ", "D ", "  "));
 
         // Act
         CommandExecutionResult result = command.Execute(context);
@@ -91,9 +92,9 @@ public sealed class TreeListCommandTests
         MockFileSystem mockFs = new MockFileSystem()
             .AddDirectoryWithComponents("/data", components);
         var writer = new MockOutputWriter();
-        var context = new Context(writer, new FileSystemTreeDisplaySettings("[FILE] ", "[DIR] ", "  "));
+        var context = new Context();
         context.Connect(mockFs, "/data");
-        var command = new TreeListCommand(1);
+        var command = new TreeListCommand(1, writer, new FileSystemTreeDisplaySettings("[FILE] ", "[DIR] ", "  "));
 
         // Act
         command.Execute(context);
@@ -114,9 +115,9 @@ public sealed class TreeListCommandTests
         MockFileSystem mockFs = new MockFileSystem()
             .AddDirectoryWithComponents("/project", components);
         var writer = new MockOutputWriter();
-        var context = new Context(writer, new FileSystemTreeDisplaySettings("[FILE] ", "[DIR] ", "    "));
+        var context = new Context();
         context.Connect(mockFs, "/project");
-        var command = new TreeListCommand(1);
+        var command = new TreeListCommand(1, writer, new FileSystemTreeDisplaySettings("[FILE] ", "[DIR] ", "    "));
 
         // Act
         command.Execute(context);
