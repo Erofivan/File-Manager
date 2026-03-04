@@ -11,7 +11,7 @@ using Itmo.ObjectOrientedProgramming.Lab4.Core.Commands.Tree.GotoCommand;
 using Itmo.ObjectOrientedProgramming.Lab4.Core.Commands.Tree.List;
 using Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystems;
 using Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystems.Components;
-using Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystems.Trees;
+using Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystems.FileSystemDisplayers;
 using Itmo.ObjectOrientedProgramming.Lab4.Core.OutputWriters;
 using Itmo.ObjectOrientedProgramming.Lab4.Tests.Mocks;
 using NSubstitute;

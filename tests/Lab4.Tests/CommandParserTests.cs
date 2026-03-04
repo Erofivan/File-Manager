@@ -7,7 +7,7 @@ using Itmo.ObjectOrientedProgramming.Lab4.Core.Commands.File.Rename;
 using Itmo.ObjectOrientedProgramming.Lab4.Core.Commands.File.Show;
 using Itmo.ObjectOrientedProgramming.Lab4.Core.Commands.Tree.GotoCommand;
 using Itmo.ObjectOrientedProgramming.Lab4.Core.Commands.Tree.List;
-using Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystems.Trees;
+using Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystems.FileSystemDisplayers;
 using Itmo.ObjectOrientedProgramming.Lab4.Presentation.Parsing;
 using Itmo.ObjectOrientedProgramming.Lab4.Tests.Mocks;
 using Xunit;

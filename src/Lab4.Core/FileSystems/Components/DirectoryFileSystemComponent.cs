@@ -10,7 +10,7 @@ public sealed class DirectoryFileSystemComponent : IFileSystemComponent
 
     public string Name { get; }
 
-    public IEnumerable<IFileSystemComponent> Children { get;  }
+    public IEnumerable<IFileSystemComponent> Children { get; }
 
     public void Accept(IFileSystemComponentsVisitor visitor)
     {

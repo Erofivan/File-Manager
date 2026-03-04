@@ -2,7 +2,7 @@ using Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystems.Components;
 using Itmo.ObjectOrientedProgramming.Lab4.Core.OutputWriters;
 using System.Text;
 
-namespace Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystems.Trees;
+namespace Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystems.FileSystemDisplayers;
 
 public sealed class FileSystemTreeVisitor : IFileSystemComponentsVisitor
 {

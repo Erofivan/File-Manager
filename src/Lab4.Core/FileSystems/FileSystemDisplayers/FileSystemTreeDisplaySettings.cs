@@ -1,4 +1,4 @@
-namespace Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystems.Trees;
+namespace Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystems.FileSystemDisplayers;
 
 public sealed class FileSystemTreeDisplaySettings
 {
