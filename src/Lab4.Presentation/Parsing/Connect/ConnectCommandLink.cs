@@ -5,31 +5,31 @@ namespace Itmo.ObjectOrientedProgramming.Lab4.Presentation.Parsing.Connect;
 
 public sealed class ConnectCommandLink : CommandLinkBase
 {
-    private readonly IConnectParamHandler? _flagHandler;
+    private readonly IConnectParamHandler _paramHandler;
 
-    public ConnectCommandLink(IConnectParamHandler? flagHandler = null)
+    public ConnectCommandLink(IConnectParamHandler paramHandler)
     {
-        _flagHandler = flagHandler;
+        _paramHandler = paramHandler;
     }
 
-    public override CommandParseResult Handle(IEnumerator<string> tokens)
+    public override CommandParseResult Handle(IEnumerator<string> tokensEnumerator)
     {
-        if (tokens.Current is not "connect")
-            return CallNext(tokens);
+        if (tokensEnumerator.Current is not "connect")
+            return CallNext(tokensEnumerator);
 
-        if (!tokens.MoveNext())
+        if (tokensEnumerator.MoveNext() is false)
             return new CommandParseResult.Failure("Missing address for 'connect' command");
 
-        string address = tokens.Current;
-
         ConnectCommandBuilder builder = new ConnectCommandBuilder()
-            .WithAddress(address);
+            .WithAddress(tokensEnumerator.Current);
 
-        var remaining = new List<string>();
-        while (tokens.MoveNext())
-            remaining.Add(tokens.Current);
+        if (tokensEnumerator.MoveNext() is false)
+            return new CommandParseResult.Success(builder.Build());
 
-        _flagHandler?.Handle(remaining, builder);
+        CommandParseResult result = _paramHandler.Handle(tokensEnumerator, builder);
+
+        if (result is CommandParseResult.Failure)
+            return result;
 
         return new CommandParseResult.Success(builder.Build());
     }

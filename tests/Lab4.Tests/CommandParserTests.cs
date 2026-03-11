@@ -8,6 +8,7 @@ using Itmo.ObjectOrientedProgramming.Lab4.Core.Commands.File.Show;
 using Itmo.ObjectOrientedProgramming.Lab4.Core.Commands.Tree.GotoCommand;
 using Itmo.ObjectOrientedProgramming.Lab4.Core.Commands.Tree.List;
 using Itmo.ObjectOrientedProgramming.Lab4.Core.FileSystems.FileSystemDisplayers;
+using Itmo.ObjectOrientedProgramming.Lab4.Presentation;
 using Itmo.ObjectOrientedProgramming.Lab4.Presentation.Parsing;
 using Itmo.ObjectOrientedProgramming.Lab4.Tests.Mocks;
 using Xunit;
@@ -26,10 +27,10 @@ public sealed class CommandParserTests
     public void Handle_ConnectCommand_CreatesCorrectCommand()
     {
         // Arrange
-        string[] args = { "connect", "/home/user" };
+        string[] args = ["connect", "/home/user"];
 
         // Act
-        CommandParseResult result = _handler.Handle(args);
+        CommandParseResult result = _handler.Handle(args.AsEnumerable().GetEnumerator());
 
         // Assert
         CommandParseResult.Success success = Assert.IsType<CommandParseResult.Success>(result);
@@ -41,14 +42,28 @@ public sealed class CommandParserTests
     public void Handle_ConnectCommandWithMode_CreatesCorrectCommand()
     {
         // Arrange
-        string[] args = { "connect", "/home/user", "-m", "local" };
+        string[] args = ["connect", "/home/user", "-m", "local"];
 
         // Act
-        CommandParseResult result = _handler.Handle(args);
+        CommandParseResult result = _handler.Handle(args.AsEnumerable().GetEnumerator());
 
         // Assert
         CommandParseResult.Success success = Assert.IsType<CommandParseResult.Success>(result);
         Assert.IsType<ConnectCommand>(success.Command);
+    }
+
+    // Parsing "connect /path -m" returns failure (mode is not specified)
+    [Fact]
+    public void Handle_ConnectCommandWithMode_ReturnFailure()
+    {
+        // Arrange
+        string[] args = ["connect", "/home/user", "-m"];
+
+        // Act
+        CommandParseResult result = _handler.Handle(args.AsEnumerable().GetEnumerator());
+
+        // Assert
+        Assert.IsType<CommandParseResult.Failure>(result);
     }
 
     // Parsing "disconnect" creates DisconnectCommand
@@ -56,10 +71,10 @@ public sealed class CommandParserTests
     public void Handle_DisconnectCommand_CreatesCorrectCommand()
     {
         // Arrange
-        string[] args = { "disconnect" };
+        string[] args = ["disconnect"];
 
         // Act
-        CommandParseResult result = _handler.Handle(args);
+        CommandParseResult result = _handler.Handle(args.AsEnumerable().GetEnumerator());
 
         // Assert
         CommandParseResult.Success success = Assert.IsType<CommandParseResult.Success>(result);
@@ -71,10 +86,10 @@ public sealed class CommandParserTests
     public void Handle_TreeGotoCommand_CreatesCorrectCommand()
     {
         // Arrange
-        string[] args = { "tree", "goto", "/some/path" };
+        string[] args = ["tree", "goto", "/some/path"];
 
         // Act
-        CommandParseResult result = _handler.Handle(args);
+        CommandParseResult result = _handler.Handle(args.AsEnumerable().GetEnumerator());
 
         // Assert
         CommandParseResult.Success success = Assert.IsType<CommandParseResult.Success>(result);
@@ -86,10 +101,10 @@ public sealed class CommandParserTests
     public void Handle_TreeListCommandWithDepth_CreatesCorrectCommand()
     {
         // Arrange
-        string[] args = { "tree", "list", "-d", "3" };
+        string[] args = ["tree", "list", "-d", "3"];
 
         // Act
-        CommandParseResult result = _handler.Handle(args);
+        CommandParseResult result = _handler.Handle(args.AsEnumerable().GetEnumerator());
 
         // Assert
         CommandParseResult.Success success = Assert.IsType<CommandParseResult.Success>(result);
@@ -101,10 +116,10 @@ public sealed class CommandParserTests
     public void Handle_TreeListCommandWithoutDepth_CreatesCommand()
     {
         // Arrange
-        string[] args = { "tree", "list" };
+        string[] args = ["tree", "list"];
 
         // Act
-        CommandParseResult result = _handler.Handle(args);
+        CommandParseResult result = _handler.Handle(args.AsEnumerable().GetEnumerator());
 
         // Assert
         CommandParseResult.Success success = Assert.IsType<CommandParseResult.Success>(result);
@@ -116,29 +131,42 @@ public sealed class CommandParserTests
     public void Handle_FileShowCommand_CreatesCorrectCommand()
     {
         // Arrange
-        string[] args = { "file", "show", "/some/file.txt", "-m", "console" };
+        string[] args = ["file", "show", "/some/file.txt", "-m", "console"];
 
         // Act
-        CommandParseResult result = _handler.Handle(args);
+        CommandParseResult result = _handler.Handle(args.AsEnumerable().GetEnumerator());
 
         // Assert
         CommandParseResult.Success success = Assert.IsType<CommandParseResult.Success>(result);
         Assert.IsType<FileShowCommand>(success.Command);
     }
 
-    // Parsing "file show /path" with default mode creates FileShowCommand
+    // Parsing "file show /path -m" creates FileShowCommand
     [Fact]
-    public void Handle_FileShowCommandDefaultMode_CreatesCorrectCommand()
+    public void Handle_FileShowCommandWitohoutModeResolved_ReturnsFailure()
     {
         // Arrange
-        string[] args = { "file", "show", "/some/file.txt" };
+        string[] args = ["file", "show", "/some/file.txt", "-m"];
 
         // Act
-        CommandParseResult result = _handler.Handle(args);
+        CommandParseResult result = _handler.Handle(args.AsEnumerable().GetEnumerator());
 
         // Assert
-        CommandParseResult.Success success = Assert.IsType<CommandParseResult.Success>(result);
-        Assert.IsType<FileShowCommand>(success.Command);
+        Assert.IsType<CommandParseResult.Failure>(result);
+    }
+
+    // Parsing "file show /path" without mode does not create command
+    [Fact]
+    public void Handle_FileShowCommandDefaultMode_ReturnsFailure()
+    {
+        // Arrange
+        string[] args = ["file", "show", "/some/file.txt"];
+
+        // Act
+        CommandParseResult result = _handler.Handle(args.AsEnumerable().GetEnumerator());
+
+        // Assert
+        Assert.IsType<CommandParseResult.Failure>(result);
     }
 
     // Parsing "file move /src /dest" creates FileMoveCommand
@@ -146,10 +174,10 @@ public sealed class CommandParserTests
     public void Handle_FileMoveCommand_CreatesCorrectCommand()
     {
         // Arrange
-        string[] args = { "file", "move", "/source.txt", "/dest" };
+        string[] args = ["file", "move", "/source.txt", "/dest"];
 
         // Act
-        CommandParseResult result = _handler.Handle(args);
+        CommandParseResult result = _handler.Handle(args.AsEnumerable().GetEnumerator());
 
         // Assert
         CommandParseResult.Success success = Assert.IsType<CommandParseResult.Success>(result);
@@ -161,10 +189,10 @@ public sealed class CommandParserTests
     public void Handle_FileCopyCommand_CreatesCorrectCommand()
     {
         // Arrange
-        string[] args = { "file", "copy", "/source.txt", "/dest" };
+        string[] args = ["file", "copy", "/source.txt", "/dest"];
 
         // Act
-        CommandParseResult result = _handler.Handle(args);
+        CommandParseResult result = _handler.Handle(args.AsEnumerable().GetEnumerator());
 
         // Assert
         CommandParseResult.Success success = Assert.IsType<CommandParseResult.Success>(result);
@@ -176,10 +204,10 @@ public sealed class CommandParserTests
     public void Handle_FileDeleteCommand_CreatesCorrectCommand()
     {
         // Arrange
-        string[] args = { "file", "delete", "/some/file.txt" };
+        string[] args = ["file", "delete", "/some/file.txt"];
 
         // Act
-        CommandParseResult result = _handler.Handle(args);
+        CommandParseResult result = _handler.Handle(args.AsEnumerable().GetEnumerator());
 
         // Assert
         CommandParseResult.Success success = Assert.IsType<CommandParseResult.Success>(result);
@@ -191,10 +219,10 @@ public sealed class CommandParserTests
     public void Handle_FileRenameCommand_CreatesCorrectCommand()
     {
         // Arrange
-        string[] args = { "file", "rename", "/some/file.txt", "newfile.txt" };
+        string[] args = ["file", "rename", "/some/file.txt", "newfile.txt"];
 
         // Act
-        CommandParseResult result = _handler.Handle(args);
+        CommandParseResult result = _handler.Handle(args.AsEnumerable().GetEnumerator());
 
         // Assert
         CommandParseResult.Success success = Assert.IsType<CommandParseResult.Success>(result);
@@ -206,10 +234,10 @@ public sealed class CommandParserTests
     public void Handle_UnknownCommand_ReturnsFailure()
     {
         // Arrange
-        string[] args = { "unknown", "command" };
+        string[] args = ["unknown", "command"];
 
         // Act
-        CommandParseResult result = _handler.Handle(args);
+        CommandParseResult result = _handler.Handle(args.AsEnumerable().GetEnumerator());
 
         // Assert
         Assert.IsType<CommandParseResult.Failure>(result);
@@ -223,7 +251,7 @@ public sealed class CommandParserTests
         string[] args = [];
 
         // Act
-        CommandParseResult result = _handler.Handle(args);
+        CommandParseResult result = _handler.Handle(args.AsEnumerable().GetEnumerator());
 
         // Assert
         Assert.IsType<CommandParseResult.Failure>(result);
@@ -234,10 +262,10 @@ public sealed class CommandParserTests
     public void Handle_SingleRandomWord_ReturnsFailure()
     {
         // Arrange
-        string[] args = { "hello" };
+        string[] args = ["hello"];
 
         // Act
-        CommandParseResult result = _handler.Handle(args);
+        CommandParseResult result = _handler.Handle(args.AsEnumerable().GetEnumerator());
 
         // Assert
         Assert.IsType<CommandParseResult.Failure>(result);

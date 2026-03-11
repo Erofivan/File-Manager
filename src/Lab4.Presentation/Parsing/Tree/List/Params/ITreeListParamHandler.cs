@@ -4,7 +4,10 @@ namespace Itmo.ObjectOrientedProgramming.Lab4.Presentation.Parsing.Tree.List.Par
 
 public interface ITreeListParamHandler
 {
-    ITreeListParamHandler AddNext(ITreeListParamHandler handler);
+    CommandParseResult Handle(IEnumerator<string> tokensEnumerator, TreeListCommandBuilder builder);
+}
 
-    void Handle(IEnumerable<string> tokens, TreeListCommandBuilder builder);
+public interface ITreeListParamLink : ITreeListParamHandler
+{
+    ITreeListParamLink AddNext(ITreeListParamLink link);
 }

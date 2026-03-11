@@ -4,18 +4,16 @@ namespace Itmo.ObjectOrientedProgramming.Lab4.Presentation.Parsing.File.Delete;
 
 public sealed class FileDeleteCommandLink : FileSubCommandLinkBase
 {
-    public override CommandParseResult Handle(IEnumerator<string> tokens)
+    public override CommandParseResult Handle(IEnumerator<string> tokensEnumerator)
     {
-        if (tokens.Current is not "delete")
-            return CallNext(tokens);
+        if (tokensEnumerator.Current is not "delete")
+            return CallNext(tokensEnumerator);
 
-        if (!tokens.MoveNext())
+        if (tokensEnumerator.MoveNext() is false)
             return new CommandParseResult.Failure("Missing path for 'file delete' command");
 
-        string path = tokens.Current;
-
         FileDeleteCommandBuilder builder = new FileDeleteCommandBuilder()
-            .WithPath(path);
+            .WithPath(tokensEnumerator.Current);
 
         return new CommandParseResult.Success(builder.Build());
     }

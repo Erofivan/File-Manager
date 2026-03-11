@@ -2,46 +2,25 @@ using Itmo.ObjectOrientedProgramming.Lab4.Core.Commands.Connect;
 
 namespace Itmo.ObjectOrientedProgramming.Lab4.Presentation.Parsing.Connect.Params;
 
-public abstract class ConnectParamHandlerBase : IConnectParamHandler
+public abstract class ConnectParamHandlerBase : IConnectParamLink
 {
-    private IConnectParamHandler? _next;
+    private IConnectParamLink? _next;
 
-    public IConnectParamHandler AddNext(IConnectParamHandler handler)
+    public abstract CommandParseResult Handle(IEnumerator<string> tokensEnumerator, ConnectCommandBuilder builder);
+
+    public IConnectParamLink AddNext(IConnectParamLink link)
     {
         if (_next is null)
-        {
-            _next = handler;
-        }
+            _next = link;
         else
-        {
-            _next.AddNext(handler);
-        }
+            _next.AddNext(link);
 
         return this;
     }
 
-    public void Handle(IEnumerable<string> tokens, ConnectCommandBuilder builder)
+    protected CommandParseResult CallNext(IEnumerator<string> tokensEnumerator, ConnectCommandBuilder builder)
     {
-        IEnumerable<string> enumerable = tokens.ToList();
-        Apply(enumerable, builder);
-        _next?.Handle(enumerable, builder);
+        return _next?.Handle(tokensEnumerator, builder)
+               ?? new CommandParseResult.Failure("Param handler for connect command is missing");
     }
-
-    protected static string? FindFlagValue(IEnumerable<string> tokens, string flagName)
-    {
-        using IEnumerator<string> enumerator = tokens.GetEnumerator();
-
-        while (enumerator.MoveNext())
-        {
-            if (string.Equals(enumerator.Current, flagName, StringComparison.Ordinal)
-                && enumerator.MoveNext())
-            {
-                return enumerator.Current;
-            }
-        }
-
-        return null;
-    }
-
-    protected abstract void Apply(IEnumerable<string> tokens, ConnectCommandBuilder builder);
 }

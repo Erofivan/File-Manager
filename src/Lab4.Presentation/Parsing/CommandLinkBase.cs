@@ -4,6 +4,8 @@ public abstract class CommandLinkBase : ICommandLink
 {
     private ICommandLink? _next;
 
+    public abstract CommandParseResult Handle(IEnumerator<string> tokensEnumerator);
+
     public ICommandLink AddNext(ICommandLink link)
     {
         if (_next is null)
@@ -14,13 +16,8 @@ public abstract class CommandLinkBase : ICommandLink
         return this;
     }
 
-    public abstract CommandParseResult Handle(IEnumerator<string> tokens);
-
-    protected CommandParseResult CallNext(IEnumerator<string> tokens)
+    protected CommandParseResult CallNext(IEnumerator<string> tokensEnumerator)
     {
-        if (_next is null)
-            return new CommandParseResult.Failure("Unknown command");
-
-        return _next.Handle(tokens);
+        return _next?.Handle(tokensEnumerator) ?? new CommandParseResult.Failure("Unknown command");
     }
 }

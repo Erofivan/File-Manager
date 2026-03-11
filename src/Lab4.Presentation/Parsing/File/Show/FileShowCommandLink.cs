@@ -12,24 +12,24 @@ public sealed class FileShowCommandLink : FileSubCommandLinkBase
         _flagHandler = flagHandler;
     }
 
-    public override CommandParseResult Handle(IEnumerator<string> tokens)
+    public override CommandParseResult Handle(IEnumerator<string> tokensEnumerator)
     {
-        if (tokens.Current is not "show")
-            return CallNext(tokens);
+        if (tokensEnumerator.Current is not "show")
+            return CallNext(tokensEnumerator);
 
-        if (!tokens.MoveNext())
+        if (tokensEnumerator.MoveNext() is false)
             return new CommandParseResult.Failure("Missing path for 'file show' command");
 
-        string path = tokens.Current;
-
         FileShowCommandBuilder builder = new FileShowCommandBuilder()
-            .WithPath(path);
+            .WithPath(tokensEnumerator.Current);
 
-        var remaining = new List<string>();
-        while (tokens.MoveNext())
-            remaining.Add(tokens.Current);
+        if (tokensEnumerator.MoveNext() is false)
+            return new CommandParseResult.Failure("-m flag is required");
 
-        _flagHandler.Handle(remaining, builder);
+        CommandParseResult result = _flagHandler.Handle(tokensEnumerator, builder);
+
+        if (result is CommandParseResult.Failure)
+            return result;
 
         return new CommandParseResult.Success(builder.Build());
     }

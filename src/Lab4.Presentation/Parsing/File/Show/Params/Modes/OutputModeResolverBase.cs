@@ -11,13 +11,9 @@ public abstract class OutputModeResolverBase : IOutputModeResolver
     public OutputModeResolverBase AddNext(OutputModeResolverBase link)
     {
         if (_next is null)
-        {
             _next = link;
-        }
         else
-        {
             _next.AddNext(link);
-        }
 
         return this;
     }

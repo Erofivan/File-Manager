@@ -12,16 +12,19 @@ public sealed class ConnectModeParamHandler : ConnectParamHandlerBase
         _modeResolver = modeResolver;
     }
 
-    protected override void Apply(IEnumerable<string> tokens, ConnectCommandBuilder builder)
+    public override CommandParseResult Handle(IEnumerator<string> tokensEnumerator, ConnectCommandBuilder builder)
     {
-        string? modeValue = FindFlagValue(tokens, "-m");
+        if (tokensEnumerator.Current is not "-m")
+            return CallNext(tokensEnumerator, builder);
 
-        if (modeValue is null)
-            return;
+        if (tokensEnumerator.MoveNext() is false)
+            return new CommandParseResult.Failure("-m flag missing value");
 
-        IFileSystemFactory? factory = _modeResolver.Resolve(modeValue);
+        IFileSystemFactory? factory = _modeResolver.Resolve(tokensEnumerator.Current);
 
         if (factory is not null)
             builder.WithFileSystemFactory(factory);
+
+        return new CommandParseResult.Success(builder.Build());
     }
 }

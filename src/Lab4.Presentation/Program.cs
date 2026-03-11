@@ -40,8 +40,9 @@ public static class Program
 
             commandHistory.Add(input);
 
-            string[] commandTokens = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            CommandParseResult parseResult = commandHandlerChain.Handle(commandTokens);
+            string[] tokens = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            IEnumerator<string> tokensEnumerator = tokens.AsEnumerable().GetEnumerator();
+            CommandParseResult parseResult = commandHandlerChain.Handle(tokensEnumerator);
 
             if (parseResult is CommandParseResult.Failure parseFailure)
             {

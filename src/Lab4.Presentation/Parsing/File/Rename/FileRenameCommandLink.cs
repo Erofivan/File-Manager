@@ -4,20 +4,20 @@ namespace Itmo.ObjectOrientedProgramming.Lab4.Presentation.Parsing.File.Rename;
 
 public sealed class FileRenameCommandLink : FileSubCommandLinkBase
 {
-    public override CommandParseResult Handle(IEnumerator<string> tokens)
+    public override CommandParseResult Handle(IEnumerator<string> tokensEnumerator)
     {
-        if (tokens.Current is not "rename")
-            return CallNext(tokens);
+        if (tokensEnumerator.Current is not "rename")
+            return CallNext(tokensEnumerator);
 
-        if (!tokens.MoveNext())
+        if (tokensEnumerator.MoveNext() is false)
             return new CommandParseResult.Failure("Missing path for 'file rename' command");
 
-        string path = tokens.Current;
+        string path = tokensEnumerator.Current;
 
-        if (!tokens.MoveNext())
+        if (tokensEnumerator.MoveNext() is false)
             return new CommandParseResult.Failure("Missing new name for 'file rename' command");
 
-        string newName = tokens.Current;
+        string newName = tokensEnumerator.Current;
 
         FileRenameCommandBuilder builder = new FileRenameCommandBuilder()
             .WithFilePath(path)

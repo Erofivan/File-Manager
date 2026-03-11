@@ -4,24 +4,24 @@ namespace Itmo.ObjectOrientedProgramming.Lab4.Presentation.Parsing.File.Copy;
 
 public sealed class FileCopyCommandLink : FileSubCommandLinkBase
 {
-    public override CommandParseResult Handle(IEnumerator<string> tokens)
+    public override CommandParseResult Handle(IEnumerator<string> tokensEnumerator)
     {
-        if (tokens.Current is not "copy")
-            return CallNext(tokens);
+        if (tokensEnumerator.Current is not "copy")
+            return CallNext(tokensEnumerator);
 
-        if (!tokens.MoveNext())
+        if (tokensEnumerator.MoveNext() is false)
             return new CommandParseResult.Failure("Missing source path for 'file copy' command");
 
-        string sourcePath = tokens.Current;
+        string currentFilePath = tokensEnumerator.Current;
 
-        if (!tokens.MoveNext())
+        if (tokensEnumerator.MoveNext() is false)
             return new CommandParseResult.Failure("Missing destination path for 'file copy' command");
 
-        string destinationPath = tokens.Current;
+        string newFilePath = tokensEnumerator.Current;
 
         FileCopyCommandBuilder builder = new FileCopyCommandBuilder()
-            .WithCurrentFilePath(sourcePath)
-            .WithNewFilePath(destinationPath);
+            .WithCurrentFilePath(currentFilePath)
+            .WithNewFilePath(newFilePath);
 
         return new CommandParseResult.Success(builder.Build());
     }

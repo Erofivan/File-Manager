@@ -4,7 +4,10 @@ namespace Itmo.ObjectOrientedProgramming.Lab4.Presentation.Parsing.Connect.Param
 
 public interface IConnectParamHandler
 {
-    IConnectParamHandler AddNext(IConnectParamHandler handler);
+    CommandParseResult Handle(IEnumerator<string> tokensEnumerator, ConnectCommandBuilder builder);
+}
 
-    void Handle(IEnumerable<string> tokens, ConnectCommandBuilder builder);
+public interface IConnectParamLink : IConnectParamHandler
+{
+    IConnectParamLink AddNext(IConnectParamLink link);
 }

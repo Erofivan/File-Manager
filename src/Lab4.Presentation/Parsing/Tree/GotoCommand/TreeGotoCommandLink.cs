@@ -4,18 +4,16 @@ namespace Itmo.ObjectOrientedProgramming.Lab4.Presentation.Parsing.Tree.GotoComm
 
 public sealed class TreeGotoCommandLink : TreeSubCommandLinkBase
 {
-    public override CommandParseResult Handle(IEnumerator<string> tokens)
+    public override CommandParseResult Handle(IEnumerator<string> tokensEnumerator)
     {
-        if (tokens.Current is not "goto")
-            return CallNext(tokens);
+        if (tokensEnumerator.Current is not "goto")
+            return CallNext(tokensEnumerator);
 
-        if (!tokens.MoveNext())
+        if (tokensEnumerator.MoveNext() is false)
             return new CommandParseResult.Failure("Missing path for 'tree goto' command");
 
-        string path = tokens.Current;
-
         TreeGotoCommandBuilder builder = new TreeGotoCommandBuilder()
-            .WithPath(path);
+            .WithPath(tokensEnumerator.Current);
 
         return new CommandParseResult.Success(builder.Build());
     }

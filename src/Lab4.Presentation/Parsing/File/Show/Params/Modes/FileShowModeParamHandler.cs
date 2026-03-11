@@ -5,8 +5,6 @@ namespace Itmo.ObjectOrientedProgramming.Lab4.Presentation.Parsing.File.Show.Par
 
 public sealed class FileShowModeParamHandler : FileShowParamHandlerBase
 {
-    private const string DefaultMode = "console";
-
     private readonly IOutputModeResolver _modeResolver;
 
     public FileShowModeParamHandler(IOutputModeResolver modeResolver)
@@ -14,13 +12,19 @@ public sealed class FileShowModeParamHandler : FileShowParamHandlerBase
         _modeResolver = modeResolver;
     }
 
-    protected override void Apply(IEnumerable<string> tokens, FileShowCommandBuilder builder)
+    public override CommandParseResult Handle(IEnumerator<string> tokensEnumerator, FileShowCommandBuilder builder)
     {
-        string mode = FindFlagValue(tokens, "-m") ?? DefaultMode;
+        if (tokensEnumerator.Current is not "-m")
+            return CallNext(tokensEnumerator, builder);
 
-        IOutputWriter? writer = _modeResolver.Resolve(mode);
+        if (tokensEnumerator.MoveNext() is false)
+            return new CommandParseResult.Failure("-m flag missing value");
+
+        IOutputWriter? writer = _modeResolver.Resolve(tokensEnumerator.Current);
 
         if (writer is not null)
             builder.WithOutputWriter(writer);
+
+        return new CommandParseResult.Success(builder.Build());
     }
 }

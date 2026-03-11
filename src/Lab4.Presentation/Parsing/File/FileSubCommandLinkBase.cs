@@ -7,24 +7,17 @@ public abstract class FileSubCommandLinkBase : IFileSubCommandLink
     public IFileSubCommandLink AddNext(IFileSubCommandLink link)
     {
         if (_next is null)
-        {
             _next = link;
-        }
         else
-        {
             _next.AddNext(link);
-        }
 
         return this;
     }
 
-    public abstract CommandParseResult Handle(IEnumerator<string> tokens);
+    public abstract CommandParseResult Handle(IEnumerator<string> tokensEnumerator);
 
     protected CommandParseResult CallNext(IEnumerator<string> tokens)
     {
-        if (_next is null)
-            return new CommandParseResult.Failure("Unknown file subcommand");
-
-        return _next.Handle(tokens);
+        return _next?.Handle(tokens) ?? new CommandParseResult.Failure("Unknown file subcommand");
     }
 }

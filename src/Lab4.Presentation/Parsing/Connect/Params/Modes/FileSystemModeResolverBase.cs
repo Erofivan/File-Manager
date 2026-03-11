@@ -11,13 +11,9 @@ public abstract class FileSystemModeResolverBase : IFileSystemModeResolver
     public FileSystemModeResolverBase AddNext(FileSystemModeResolverBase resolver)
     {
         if (_next is null)
-        {
             _next = resolver;
-        }
         else
-        {
             _next.AddNext(resolver);
-        }
 
         return this;
     }

@@ -2,46 +2,25 @@ using Itmo.ObjectOrientedProgramming.Lab4.Core.Commands.Tree.List;
 
 namespace Itmo.ObjectOrientedProgramming.Lab4.Presentation.Parsing.Tree.List.Params;
 
-public abstract class TreeListParamHandlerBase : ITreeListParamHandler
+public abstract class TreeListParamHandlerBase : ITreeListParamLink
 {
-    private ITreeListParamHandler? _next;
+    private ITreeListParamLink? _next;
 
-    public ITreeListParamHandler AddNext(ITreeListParamHandler handler)
+    public abstract CommandParseResult Handle(IEnumerator<string> tokensEnumerator, TreeListCommandBuilder builder);
+
+    public ITreeListParamLink AddNext(ITreeListParamLink link)
     {
         if (_next is null)
-        {
-            _next = handler;
-        }
+            _next = link;
         else
-        {
-            _next.AddNext(handler);
-        }
+            _next.AddNext(link);
 
         return this;
     }
 
-    public void Handle(IEnumerable<string> tokens, TreeListCommandBuilder builder)
+    protected CommandParseResult CallNext(IEnumerator<string> tokensEnumerator, TreeListCommandBuilder builder)
     {
-        IEnumerable<string> enumerable = tokens.ToList();
-        Apply(enumerable, builder);
-        _next?.Handle(enumerable, builder);
+        return _next?.Handle(tokensEnumerator, builder)
+               ?? new CommandParseResult.Failure("Param handler for tree list command is missing");
     }
-
-    protected static string? FindFlagValue(IEnumerable<string> tokens, string flagName)
-    {
-        using IEnumerator<string> enumerator = tokens.GetEnumerator();
-
-        while (enumerator.MoveNext())
-        {
-            if (string.Equals(enumerator.Current, flagName, StringComparison.Ordinal)
-                && enumerator.MoveNext())
-            {
-                return enumerator.Current;
-            }
-        }
-
-        return null;
-    }
-
-    protected abstract void Apply(IEnumerable<string> tokens, TreeListCommandBuilder builder);
 }

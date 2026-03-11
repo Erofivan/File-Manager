@@ -2,46 +2,25 @@ using Itmo.ObjectOrientedProgramming.Lab4.Core.Commands.File.Show;
 
 namespace Itmo.ObjectOrientedProgramming.Lab4.Presentation.Parsing.File.Show.Params;
 
-public abstract class FileShowParamHandlerBase : IFileShowParamHandler
+public abstract class FileShowParamHandlerBase : IFileShowParamLink
 {
-    private IFileShowParamHandler? _next;
+    private IFileShowParamLink? _next;
 
-    public IFileShowParamHandler AddNext(IFileShowParamHandler handler)
+    public abstract CommandParseResult Handle(IEnumerator<string> tokensEnumerator, FileShowCommandBuilder builder);
+
+    public IFileShowParamLink AddNext(IFileShowParamLink link)
     {
         if (_next is null)
-        {
-            _next = handler;
-        }
+            _next = link;
         else
-        {
-            _next.AddNext(handler);
-        }
+            _next.AddNext(link);
 
         return this;
     }
 
-    public void Handle(IEnumerable<string> tokens, FileShowCommandBuilder builder)
+    protected CommandParseResult CallNext(IEnumerator<string> tokensEnumerator, FileShowCommandBuilder builder)
     {
-        IEnumerable<string> enumerable = tokens.ToList();
-        Apply(enumerable, builder);
-        _next?.Handle(enumerable, builder);
+        return _next?.Handle(tokensEnumerator, builder)
+               ?? new CommandParseResult.Failure("Param handler for file show command is missing");
     }
-
-    protected static string? FindFlagValue(IEnumerable<string> tokens, string flagName)
-    {
-        using IEnumerator<string> enumerator = tokens.GetEnumerator();
-
-        while (enumerator.MoveNext())
-        {
-            if (string.Equals(enumerator.Current, flagName, StringComparison.Ordinal)
-                && enumerator.MoveNext())
-            {
-                return enumerator.Current;
-            }
-        }
-
-        return null;
-    }
-
-    protected abstract void Apply(IEnumerable<string> tokens, FileShowCommandBuilder builder);
 }

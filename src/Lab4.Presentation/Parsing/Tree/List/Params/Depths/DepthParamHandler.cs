@@ -5,14 +5,19 @@ namespace Itmo.ObjectOrientedProgramming.Lab4.Presentation.Parsing.Tree.List.Par
 
 public sealed class DepthParamHandler : TreeListParamHandlerBase
 {
-    protected override void Apply(IEnumerable<string> tokens, TreeListCommandBuilder builder)
+    public override CommandParseResult Handle(IEnumerator<string> tokensEnumerator, TreeListCommandBuilder builder)
     {
-        string? depthValue = FindFlagValue(tokens, "-d");
+        if (tokensEnumerator.Current is not "-d")
+            return CallNext(tokensEnumerator, builder);
 
-        if (depthValue is not null
-            && int.TryParse(depthValue, NumberStyles.Integer, CultureInfo.InvariantCulture, out int depth))
+        if (tokensEnumerator.MoveNext() is false)
         {
-            builder.WithDepth(depth);
+            return new CommandParseResult.Failure("-d flag missing value");
         }
+
+        if (int.TryParse(tokensEnumerator.Current, NumberStyles.Integer, CultureInfo.InvariantCulture, out int depth))
+            builder.WithDepth(depth);
+
+        return new CommandParseResult.Success(builder.Build());
     }
 }

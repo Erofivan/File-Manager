@@ -4,7 +4,10 @@ namespace Itmo.ObjectOrientedProgramming.Lab4.Presentation.Parsing.File.Show.Par
 
 public interface IFileShowParamHandler
 {
-    IFileShowParamHandler AddNext(IFileShowParamHandler handler);
+    CommandParseResult Handle(IEnumerator<string> tokensEnumerator, FileShowCommandBuilder builder);
+}
 
-    void Handle(IEnumerable<string> tokens, FileShowCommandBuilder builder);
+public interface IFileShowParamLink : IFileShowParamHandler
+{
+    IFileShowParamLink AddNext(IFileShowParamLink link);
 }

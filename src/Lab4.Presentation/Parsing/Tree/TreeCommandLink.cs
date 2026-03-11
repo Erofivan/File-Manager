@@ -9,14 +9,14 @@ public sealed class TreeCommandLink : CommandLinkBase
         _subChain = subChain;
     }
 
-    public override CommandParseResult Handle(IEnumerator<string> tokens)
+    public override CommandParseResult Handle(IEnumerator<string> tokensEnumerator)
     {
-        if (tokens.Current is not "tree")
-            return CallNext(tokens);
+        if (tokensEnumerator.Current is not "tree")
+            return CallNext(tokensEnumerator);
 
-        if (!tokens.MoveNext())
+        if (tokensEnumerator.MoveNext() is false)
             return new CommandParseResult.Failure("Missing subcommand after 'tree'");
 
-        return _subChain.Handle(tokens);
+        return _subChain.Handle(tokensEnumerator);
     }
 }

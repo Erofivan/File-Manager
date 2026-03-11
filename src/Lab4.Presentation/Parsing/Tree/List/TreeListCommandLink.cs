@@ -21,20 +21,16 @@ public sealed class TreeListCommandLink : TreeSubCommandLinkBase
         _flagHandler = flagHandler;
     }
 
-    public override CommandParseResult Handle(IEnumerator<string> tokens)
+    public override CommandParseResult Handle(IEnumerator<string> tokensEnumerator)
     {
-        if (tokens.Current is not "list")
-            return CallNext(tokens);
+        if (tokensEnumerator.Current is not "list")
+            return CallNext(tokensEnumerator);
 
         TreeListCommandBuilder builder = new TreeListCommandBuilder()
             .WithOutputWriter(_outputWriter)
             .WithTreeDisplaySettings(_treeDisplaySettings);
 
-        var remaining = new List<string>();
-        while (tokens.MoveNext())
-            remaining.Add(tokens.Current);
-
-        _flagHandler?.Handle(remaining, builder);
+        _flagHandler?.Handle(tokensEnumerator, builder);
 
         return new CommandParseResult.Success(builder.Build());
     }
