@@ -17,8 +17,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\Lab4.Core\Lab4.Core.csproj" />
-      <ProjectReference Include="..\..\src\Lab4.Presentation\Lab4.Presentation.csproj" />
+      <ProjectReference Include="..\..\src\FilesManager.Core\FilesManager.Core.csproj" />
+      <ProjectReference Include="..\..\src\FilesManager.Presentation\FilesManager.Presentation.csproj" />
     </ItemGroup>
 
 </Project>
